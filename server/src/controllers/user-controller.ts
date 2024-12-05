@@ -5,6 +5,7 @@ import User from '../models/User.js';
 import { signToken } from '../services/auth.js';
 
 // get a single user by either their id or their username
+// this function will be the resolvers for the 'me' query in the schema
 export const getSingleUser = async (req: Request, res: Response) => {
   const foundUser = await User.findOne({
     $or: [{ _id: req.user ? req.user._id : req.params.id }, { username: req.params.username }],
