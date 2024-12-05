@@ -16,7 +16,7 @@ import type { Book } from '../models/Book';
 import type { GoogleAPIBook } from '../models/GoogleAPIBook';
 
 import { useMutation, useQuery } from '@apollo/client';
-import { SAVE_BOOK } from '../graphql/mutations';
+import { SAVE_BOOK } from '../utils/mutations';
 
 const SearchBooks = () => {
   // create state for holding returned google api data
