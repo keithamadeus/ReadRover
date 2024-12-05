@@ -1,3 +1,6 @@
+// Implement the Apollo Server and apply it to the Express server as middleware.
+
+
 import express from 'express';
 import path from 'node:path';
 import db from './config/connection.js';
