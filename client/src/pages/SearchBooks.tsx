@@ -11,7 +11,7 @@ import {
 
 import Auth from '../utils/auth';
 import { searchGoogleBooks } from '../utils/API';
-import { saveBookIds, getSavedBookIds, saveBookId } from '../utils/localStorage';
+import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
 import type { Book } from '../models/Book';
 import type { GoogleAPIBook } from '../models/GoogleAPIBook';
 
@@ -85,7 +85,6 @@ const SearchBooks = () => {
         variables: { book: bookToSave },
       });
 
-      saveBookId(bookToSave.bookId);
       setBookId(bookToSave.bookId);
 
       // if book successfully saves to user's account, save book id to state
