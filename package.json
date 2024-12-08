@@ -13,13 +13,23 @@
     "client:build": "cd client && npm run build",
     "client:dev": "cd client && npm run dev",
     "build": "concurrently \"cd server && npm run build\" \"cd client && npm run build\"",
-    "render-build":"npm install && npm run build"
+    "render-build": "npm install && npm run build"
   },
-  "keywords": ["google", "books", "app", "nodejs", "express", "react"],
+  "keywords": [
+    "google",
+    "books",
+    "app",
+    "nodejs",
+    "express",
+    "react"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "concurrently": "^8.2.0",
     "wait-on": "^7.2.0"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.12.2"
   }
 }

@@ -1,5 +1,4 @@
-// Define the query and mutation functionality to work with the Mongoose models.
-import { User } from '../models/User';
+import User from '../models/User';
 import { signToken } from '../services/auth';
 import type { Request, Response } from 'express';
 
@@ -15,9 +14,9 @@ interface AddUserArgs {
 
 const resolvers = {
   Query: {
-    me: async (_: any, args: MeArgs, context: { req: Request }) => {
+    me: async (_: any, args: MeArgs, context: { req: Request, res: Response }) => {
       const foundUser = await User.findOne({
-        $or: [{ _id: context.req.user ? context.req.user._id : args.user_id }, { username: args.username }],
+        $or: [{ _id: context.req.user ? context.req.user._id : args.user_id }],
       });
 
       if (!foundUser) {
@@ -51,7 +50,7 @@ const resolvers = {
       const token = signToken(user.username, user.password, user._id);
       return { token, user };
     },
-    saveBook: async (_: any, args: { book: any }, context: { req: Request }) => {
+    saveBook: async (_: any, args: { book: any }, context: { req: Request, res: Response  }) => {
       try {
         const updatedUser = await User.findOneAndUpdate(
           { _id: context.req.user._id },
@@ -64,7 +63,7 @@ const resolvers = {
         throw new Error('Error saving book');
       }
     },
-    deleteBook: async (_: any, args: { bookId: string }, context: { req: Request }) => {
+    deleteBook: async (_: any, args: { bookId: string }, context: { req: Request, res: Response  }) => {
       const updatedUser = await User.findOneAndUpdate(
         { _id: context.req.user._id },
         { $pull: { savedBooks: { bookId: args.bookId } } },

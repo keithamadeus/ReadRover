@@ -1,7 +1,7 @@
 import express from 'express';
 import path from 'node:path';
 import db from './config/connection.js';
-import routes from './routes/index.js';
+// import routes from './routes/index.js';
 
 
 // Implement the Apollo Server and apply it to the Express server as middleware.
@@ -18,7 +18,7 @@ const server = new ApolloServer({
 
 const startApolloServer = async () => {
   await server.start();
-  await db();
+  db.once('open', async () => {
 
   const PORT = process.env.PORT || 3001;
   const app = express();
@@ -40,9 +40,10 @@ const startApolloServer = async () => {
     });
   }
 
-  app.listen(PORT, () => {
-    console.log(`API server running on port ${PORT}!`);
-    console.log(`Use GraphQL at http://localhost:${PORT}/graphql`);
+    app.listen(PORT, () => {
+      console.log(`API server running on port ${PORT}!`);
+      console.log(`Use GraphQL at http://localhost:${PORT}/graphql`);
+    });
   });
 };
 
