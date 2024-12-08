@@ -5,6 +5,7 @@ import { Container, Card, Button, Row, Col } from 'react-bootstrap';
 import { GET_ME } from '../utils/queries';
 import { REMOVE_BOOK } from '../utils/mutations';
 import { removeBookId } from '../utils/localStorage';
+import Auth from '../utils/auth.js';
 
 const SavedBooks = () => {
   const { loading, data } = useQuery(GET_ME);
@@ -13,6 +14,12 @@ const SavedBooks = () => {
   const userData = data?.me || {};
 
   const handleDeleteBook = async (bookId: string) => {
+    const token = Auth.loggedIn() ? Auth.getToken() : null;
+
+    if (!token) {
+      return false;
+    }
+
     try {
       await removeBook({
         variables: { bookId },
@@ -25,7 +32,7 @@ const SavedBooks = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <h2>LOADING...</h2>;
   }
 
   return (

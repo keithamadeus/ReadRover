@@ -9,7 +9,7 @@ import {
   Row
 } from 'react-bootstrap';
 
-import Auth from '../utils/auth';
+import Auth from '../utils/auth.js';
 import { searchGoogleBooks } from '../utils/API';
 import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
 import type { Book } from '../models/Book';
@@ -85,6 +85,7 @@ const SearchBooks = () => {
         variables: { book: bookToSave },
       });
 
+      setSavedBookIds([...savedBookIds, bookId]);
 
       // if book successfully saves to user's account, save book id to state
       setSavedBookIds([...savedBookIds, bookToSave.bookId]);

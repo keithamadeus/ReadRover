@@ -2,7 +2,7 @@ import type { Request, Response } from 'express';
 // import user model
 import User from '../models/User.js';
 // import sign token function from auth
-import { signToken } from '../services/auth.js';
+import { signToken } from '../utils/auth.js';
 
 // get a single user by either their id or their username
 // this function will be the resolvers for the 'me' query in the schema
@@ -25,7 +25,7 @@ export const createUser = async (req: Request, res: Response) => {
   if (!user) {
     return res.status(400).json({ message: 'Something is wrong!' });
   }
-  const token = signToken(user.username, user.password, user._id);
+  const token = signToken({ username: user.username, email: user.email, _id: user._id as string });
   return res.json({ token, user });
 };
 
@@ -42,7 +42,7 @@ export const login = async (req: Request, res: Response) => {
   if (!correctPw) {
     return res.status(400).json({ message: 'Wrong password!' });
   }
-  const token = signToken(user.username, user.password, user._id);
+  const token = signToken({ username: user.username, email: user.email, _id: user._id as string });
   return res.json({ token, user });
 };
 

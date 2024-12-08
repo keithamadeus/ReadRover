@@ -1,78 +1,58 @@
-import User from '../models/User';
-import { signToken } from '../services/auth';
-import type { Request, Response } from 'express';
+import User from '../models/User.js';
+import { signToken } from '../utils/auth.js';
 
-interface MeArgs {
-  user_id: string;
-}
 
-interface AddUserArgs {
-  username: string;
-  email: string;
-  password: string;
-}
 
 const resolvers = {
   Query: {
-    me: async (_: any, args: MeArgs, context: { req: Request, res: Response }) => {
-      const foundUser = await User.findOne({
-        $or: [{ _id: context.req.user ? context.req.user._id : args.user_id }],
-      });
-
-      if (!foundUser) {
-        throw new Error('Cannot find a user with this id!');
+    me: async (_: any, __: any, context: { req: any }) => {
+      if (context.req.user) {
+        return User.findById(context.req.user._id);
       }
-
-      return foundUser;
+      throw new Error('Not authenticated');
     },
   },
   Mutation: {
-    addUser: async (_: any, args: AddUserArgs) => {
-      const user = await User.create(args);
-
+    login: async (_: any, { email, password }: { email: string; password: string }) => {
+      const user = await User.findOne({ email });
       if (!user) {
-        throw new Error('Something is wrong!');
-      }
-      const token = signToken(user.username, user.password, user._id);
-      return { token, user };
-    },
-    login: async (_: any, args: { username: string; email: string; password: string }) => {
-      const user = await User.findOne({ $or: [{ username: args.username }, { email: args.email }] });
-      if (!user) {
-        throw new Error("Can't find this user");
+        throw new Error('No user found with this email address');
       }
 
-      const correctPw = await user.isCorrectPassword(args.password);
-
+      const correctPw = await user.isCorrectPassword(password);
       if (!correctPw) {
-        throw new Error('Wrong password!');
+        throw new Error('Incorrect credentials');
       }
-      const token = signToken(user.username, user.password, user._id);
+
+      const token = signToken(user as { username: string; email: string; _id: string });
       return { token, user };
     },
-    saveBook: async (_: any, args: { book: any }, context: { req: Request, res: Response  }) => {
-      try {
-        const updatedUser = await User.findOneAndUpdate(
-          { _id: context.req.user._id },
-          { $addToSet: { savedBooks: args.book } },
+    addUser: async (_: any, { username, email, password }: { username: string; email: string; password: string }) => {
+      const user = await User.create({ username, email, password });
+      const token = signToken(user as { username: string; email: string; _id: string });
+      return { token, user };
+    },
+    saveBook: async (_: any, { book }: { book: any }, context: { req: any }) => {
+      if (context.req.user) {
+        const updatedUser = await User.findByIdAndUpdate(
+          context.req.user._id,
+          { $addToSet: { savedBooks: book } },
           { new: true, runValidators: true }
         );
         return updatedUser;
-      } catch (err) {
-        console.log(err);
-        throw new Error('Error saving book');
       }
+      throw new Error('Not authenticated');
     },
-    deleteBook: async (_: any, args: { bookId: string }, context: { req: Request, res: Response  }) => {
-      const updatedUser = await User.findOneAndUpdate(
-        { _id: context.req.user._id },
-        { $pull: { savedBooks: { bookId: args.bookId } } },
-        { new: true }
-      );
-      if (!updatedUser) {
-        throw new Error("Couldn't find user with this id!");
+    removeBook: async (_: any, { bookId }: { bookId: string }, context: { req: any }) => {
+      if (context.req.user) {
+        const updatedUser = await User.findByIdAndUpdate(
+          context.req.user._id,
+          { $pull: { savedBooks: { bookId } } },
+          { new: true }
+        );
+        return updatedUser;
       }
-      return updatedUser;
+      throw new Error('Not authenticated');
     },
   },
 };

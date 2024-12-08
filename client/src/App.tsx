@@ -1,8 +1,8 @@
-import './App.css';
-import { Outlet } from 'react-router-dom';
-// Create an Apollo Provider to make every request work with the Apollo Server.
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
-
+import React from 'react';
+import { ApolloProvider, InMemoryCache, ApolloClient } from '@apollo/client';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import SearchBooks from './pages/SearchBooks';
+import SavedBooks from './pages/SavedBooks';
 import Navbar from './components/Navbar';
 
 const client = new ApolloClient({
@@ -13,8 +13,16 @@ const client = new ApolloClient({
 function App() {
   return (
     <ApolloProvider client={client}>
-      <Navbar />
-      <Outlet />
+      <Router>
+        <>
+          <Navbar />
+          <Routes>
+            <Route path='/' element={<SearchBooks />} />
+            <Route path='/saved' element={<SavedBooks />} />
+            <Route path='*' element={<h1 className='display-2'>Wrong page!</h1>} />
+          </Routes>
+        </>
+      </Router>
     </ApolloProvider>
   );
 }
