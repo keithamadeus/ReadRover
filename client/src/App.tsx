@@ -1,28 +1,54 @@
-import React from 'react';
-import { ApolloProvider, InMemoryCache, ApolloClient } from '@apollo/client';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import SearchBooks from './pages/SearchBooks';
-import SavedBooks from './pages/SavedBooks';
-import Navbar from './components/Navbar';
+import {
+  ApolloClient,
+  ApolloProvider,
+  InMemoryCache,
+  createHttpLink,
+} from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
+import { Outlet } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import "./App.css";
 
-const client = new ApolloClient({
-  uri: '/graphql',
-  cache: new InMemoryCache(),
+const httpLink = createHttpLink({
+  uri: "/graphql", // The URI of the GraphQL server
 });
 
+// Set the authorization headers for every request
+const authLink = setContext((_, { headers }) => {
+  // Get the authentication token from local storage if it
+  const token = localStorage.getItem("id_token");
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : "",
+    },
+  };
+});
+
+// Create a new ApolloClient instance
+const client = new ApolloClient({
+  link: authLink.concat(httpLink),
+  cache: new InMemoryCache({
+    typePolicies: {
+      User: {
+        fields: {
+          savedBooks: {
+            merge(existing = [], incoming = []) {
+              return [...existing, ...incoming];
+            },
+          },
+        },
+      },
+    },
+  }),
+});
+
+// Define the App component
 function App() {
   return (
     <ApolloProvider client={client}>
-      <Router>
-        <>
-          <Navbar />
-          <Routes>
-            <Route path='/' element={<SearchBooks />} />
-            <Route path='/saved' element={<SavedBooks />} />
-            <Route path='*' element={<h1 className='display-2'>Wrong page!</h1>} />
-          </Routes>
-        </>
-      </Router>
+      <Navbar />
+      <Outlet />
     </ApolloProvider>
   );
 }
