@@ -1,7 +1,26 @@
 import User from '../models/User.js';
-import { signToken } from '../utils/auth.js';
+import { signToken, AuthenticationError } from '../utils/auth.js';
 
+interface LoginUserArgs {
+  email: string;
+  password: string;
+}
 
+interface AddUserArgs {
+  username: string;
+  email: string;
+  password: string;
+}
+
+interface SaveBookArgs {
+  book: any;
+  // authors: string[];
+  //   description: string;
+  //   title: string;
+  //   bookId: string;
+  //   image: string;
+  //   link: string;
+}
 
 const resolvers = {
   Query: {
@@ -16,12 +35,12 @@ const resolvers = {
     login: async (_: any, { email, password }: { email: string; password: string }) => {
       const user = await User.findOne({ email });
       if (!user) {
-        throw new Error('No user found with this email address');
+        throw new AuthenticationError('No user found with this email address');
       }
 
       const correctPw = await user.isCorrectPassword(password);
       if (!correctPw) {
-        throw new Error('Incorrect credentials');
+        throw new AuthenticationError('Incorrect credentials');
       }
 
       const token = signToken(user as { username: string; email: string; _id: string });

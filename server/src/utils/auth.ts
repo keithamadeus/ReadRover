@@ -4,11 +4,11 @@ import { GraphQLError } from 'graphql';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const secret = 'your_secret_key';
+const secret = process.env.JWT_SECRET_KEY || '';
 const expiration = '2h';
 
 export const authMiddleware = ({ req }: { req: Request }) => {
-  let token = req.headers.authorization || '';
+  let token = req.body.token || req.query.token || req.headers.authorization;
 
   if (req.headers.authorization) {
     token = token.split(' ').pop()?.trim() || '';

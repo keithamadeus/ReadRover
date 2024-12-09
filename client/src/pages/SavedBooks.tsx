@@ -1,14 +1,13 @@
 // import React from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { Container, Card, Button, Row, Col } from 'react-bootstrap';
-
 import { GET_ME } from '../utils/queries';
 import { REMOVE_BOOK } from '../utils/mutations';
-import { removeBookId } from '../utils/localStorage';
+import { Book } from '../models/Book';
 import Auth from '../utils/auth.js';
 
 const SavedBooks = () => {
-  const { loading, data } = useQuery(GET_ME);
+  const { loading, data, refetch } = useQuery(GET_ME);
   const [removeBook] = useMutation(REMOVE_BOOK);
 
   const userData = data?.me || {};
@@ -24,8 +23,7 @@ const SavedBooks = () => {
       await removeBook({
         variables: { bookId },
       });
-
-      removeBookId(bookId);
+      refetch();
     } catch (err) {
       console.error(err);
     }
@@ -55,7 +53,7 @@ const SavedBooks = () => {
             : 'You have no saved books!'}
         </h2>
         <Row>
-          {userData.savedBooks.map((book: any) => {
+          {userData.savedBooks.map((book: Book) => {
             return (
               <Col md='4'>
                 <Card key={book.bookId} border='dark'>
@@ -71,10 +69,16 @@ const SavedBooks = () => {
                     <p className='small'>Authors: {book.authors}</p>
                     <Card.Text>{book.description}</Card.Text>
                     <Button
+                    href={book.link.replace("http://", "https://")}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    variant="primary"
+                  > Preview Book
+                  </Button>
+                    <Button
                       className='btn-block btn-danger'
                       onClick={() => handleDeleteBook(book.bookId)}
-                    >
-                      Delete this Book!
+                    > Delete this Book!
                     </Button>
                   </Card.Body>
                 </Card>

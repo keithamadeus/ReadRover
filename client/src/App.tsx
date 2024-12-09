@@ -1,12 +1,7 @@
 // Import the custom CSS file for styling
 import "./App.css";
 // Import Apollo Client libraries for connecting to the GraphQL server
-import {
-  ApolloClient,
-  ApolloProvider,
-  InMemoryCache,
-  createHttpLink,
-} from "@apollo/client";
+import { ApolloClient, ApolloProvider, InMemoryCache, createHttpLink, } from "@apollo/client";
 // Import utility for setting headers with authentication tokens
 import { setContext } from "@apollo/client/link/context";
 // Import Outlet from React Router for nested routes
