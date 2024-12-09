@@ -1,26 +1,28 @@
 import User from '../models/User.js';
 import { signToken, AuthenticationError } from '../utils/auth.js';
 
-interface LoginUserArgs {
-  email: string;
-  password: string;
-}
+// I was sure these were important, I can't get the app to run with them commented in
 
-interface AddUserArgs {
-  username: string;
-  email: string;
-  password: string;
-}
+// interface LoginUserArgs {
+//   email: string;
+//   password: string;
+// }
 
-interface SaveBookArgs {
-  book: any;
-  // authors: string[];
-  //   description: string;
-  //   title: string;
-  //   bookId: string;
-  //   image: string;
-  //   link: string;
-}
+// interface AddUserArgs {
+//   username: string;
+//   email: string;
+//   password: string;
+// }
+
+// interface SaveBookArgs {
+//   book: any;
+//   // authors: string[];
+//   //   description: string;
+//   //   title: string;
+//   //   bookId: string;
+//   //   image: string;
+//   //   link: string;
+// }
 
 const resolvers = {
   Query: {
