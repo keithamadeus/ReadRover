@@ -1,34 +1,12 @@
 import User from '../models/User.js';
 import { signToken, AuthenticationError } from '../utils/auth.js';
 
-// I was sure these were important, I can't get the app to run with them commented in
-
-// interface LoginUserArgs {
-//   email: string;
-//   password: string;
-// }
-
-// interface AddUserArgs {
-//   username: string;
-//   email: string;
-//   password: string;
-// }
-
-// interface SaveBookArgs {
-//   book: any;
-//   // authors: string[];
-//   //   description: string;
-//   //   title: string;
-//   //   bookId: string;
-//   //   image: string;
-//   //   link: string;
-// }
 
 const resolvers = {
   Query: {
-    me: async (_: any, __: any, context: { req: any }) => {
-      if (context.req.user) {
-        return User.findById(context.req.user._id);
+    me: async (_: any, __: any, context: { user: any }) => {
+      if (context.user) {
+        return User.findById(context.user._id);
       }
       throw new Error('Not authenticated');
     },
@@ -53,21 +31,21 @@ const resolvers = {
       const token = signToken(user as { username: string; email: string; _id: string });
       return { token, user };
     },
-    saveBook: async (_: any, { book }: { book: any }, context: { req: any }) => {
-      if (context.req.user) {
+    saveBook: async (_: any, { input }: { input: any }, context: { user: any }) => {
+      if (context.user) {
         const updatedUser = await User.findByIdAndUpdate(
-          context.req.user._id,
-          { $addToSet: { savedBooks: book } },
+          context.user._id,
+          { $addToSet: { savedBooks: input } },
           { new: true, runValidators: true }
         );
         return updatedUser;
       }
       throw new Error('Not authenticated');
     },
-    removeBook: async (_: any, { bookId }: { bookId: string }, context: { req: any }) => {
-      if (context.req.user) {
+    removeBook: async (_: any, { bookId }: { bookId: string }, context: { user: any }) => {
+      if (context.user) {
         const updatedUser = await User.findByIdAndUpdate(
-          context.req.user._id,
+          context.user._id,
           { $pull: { savedBooks: { bookId } } },
           { new: true }
         );

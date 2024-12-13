@@ -17,7 +17,7 @@ const SignupForm = ({}: { handleModalClose: () => void }) => {
 
   const [validated] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
-  const [createUser] = useMutation(ADD_USER);
+  const [addUser] = useMutation(ADD_USER);
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -26,7 +26,7 @@ const SignupForm = ({}: { handleModalClose: () => void }) => {
 
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
+    // console.log(userFormData);
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.preventDefault();
@@ -34,9 +34,9 @@ const SignupForm = ({}: { handleModalClose: () => void }) => {
     }
 
     try {
-      const { data } = await createUser({
+      const { data } = await addUser({
         variables: {
-          input: { ...userFormData },
+           ...userFormData
         },
       });
 

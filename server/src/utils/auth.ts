@@ -24,7 +24,6 @@ export const authMiddleware = ({ req }: { req: Request }) => {
   } catch {
     console.log('Invalid token');
   }
-
   return req;
 };
 
