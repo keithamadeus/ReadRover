@@ -48,9 +48,6 @@ npm run start:dev
 ## Usage
 
 Enter a book title or keyword, and you'll get a list of books with their details like title, author, and a link to Google Books. 
-
-**Future Development**
-
 Sign up or log in via a modal that toggles between these options
 Once logged in, manage your saved books list, adding or removing books as you see fit. 
 Logout: Easily log out to secure your account.  
